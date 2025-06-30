@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { FormEvent, useState } from 'react'
 import toast from 'react-hot-toast'
 import './styles/main.css'
 
@@ -15,7 +15,7 @@ export default function Home() {
   const [modalPhone, setModalPhone] = useState('')
 
   const handleSubmit = async (
-    e: any,
+    e: FormEvent,
     customAmount = amount,
     customPhone = phone,
     closeModal = false
@@ -37,7 +37,7 @@ export default function Home() {
       } else {
         toast.error(data.message || 'Error occurred', { id: loading })
       }
-    } catch (err) {
+    } catch {
       toast.error('Network error', { id: loading })
     }
   }
