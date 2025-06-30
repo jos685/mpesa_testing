@@ -1,0 +1,91 @@
+.container {
+    padding: 2rem;
+    font-family: sans-serif;
+    text-align: center;
+  }
+  
+  .title {
+    font-size: 24px;
+    margin-top: 2rem;
+    margin-bottom: 1rem;
+  }
+
+  .title1 {
+    font-size: 24px;
+    margin-top: 2rem;
+    margin-bottom: 1rem;
+    color: rgb(237, 99, 99);
+  }
+  
+  .form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+  }
+  
+  .input {
+    padding: 0.5rem;
+    width: 250px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+  }
+  
+  .button {
+    background-color: green;
+    color: white;
+    border: none;
+    padding: 0.6rem 1.5rem;
+    border-radius: 6px;
+    cursor: pointer;
+  }
+  
+  .cancel {
+    background-color: #ccc;
+    color: #000;
+    margin-top: 0.5rem;
+  }
+  
+  .box-container {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    margin-top: 1rem;
+    flex-wrap: wrap;
+  }
+  
+  .price-box {
+    padding: 1rem 2rem;
+    background-color: #414040;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: all 0.2s;
+  }
+  
+  .price-box:hover {
+    background-color: #65f165;
+    border-color: green;
+  }
+  
+  .modal-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .modal {
+    background: #afabab;
+    padding: 2rem;
+    border-radius: 10px;
+    width: 300px;
+    text-align: center;
+  }
+  

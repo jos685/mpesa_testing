@@ -1,95 +1,110 @@
-import Image from "next/image";
-import styles from "./page.module.css";
+'use client'
+
+import { useState } from 'react'
+import toast from 'react-hot-toast'
+import './styles/main.css'
+
+const predefinedPrices = [50, 60, 70, 80, 100, 200]
 
 export default function Home() {
-  return (
-    <div className={styles.page}>
-      <main className={styles.main}>
-        <Image
-          className={styles.logo}
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol>
-          <li>
-            Get started by editing <code>src/app/page.tsx</code>.
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
+  const [phone, setPhone] = useState('')
+  const [amount, setAmount] = useState('')
 
-        <div className={styles.ctas}>
-          <a
-            className={styles.primary}
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className={styles.logo}
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
+  const [modalOpen, setModalOpen] = useState(false)
+  const [selectedAmount, setSelectedAmount] = useState<number | null>(null)
+  const [modalPhone, setModalPhone] = useState('')
+
+  const handleSubmit = async (
+    e: any,
+    customAmount = amount,
+    customPhone = phone,
+    closeModal = false
+  ) => {
+    e.preventDefault()
+    const loading = toast.loading('Sending payment request...')
+
+    try {
+      const res = await fetch('/api/stk-push', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ phone: customPhone, amount: customAmount }),
+      })
+      const data = await res.json()
+
+      if (res.ok) {
+        toast.success('STK Push sent to phone!', { id: loading })
+        if (closeModal) setModalOpen(false)
+      } else {
+        toast.error(data.message || 'Error occurred', { id: loading })
+      }
+    } catch (err) {
+      toast.error('Network error', { id: loading })
+    }
+  }
+
+  const handleBoxClick = (price: number) => {
+    setSelectedAmount(price)
+    setModalPhone('')
+    setModalOpen(true)
+  }
+
+  return (
+    <main className="container">
+      {/* Top input form */}
+      <h1 className="title">M-Pesa STK Push Demo</h1>
+      <form onSubmit={handleSubmit} className="form">
+        <input
+          className="input"
+          placeholder="Phone (2547...)"
+          value={phone}
+          onChange={(e) => setPhone(e.target.value)}
+          required
+        />
+        <input
+          className="input"
+          placeholder="Amount"
+          value={amount}
+          onChange={(e) => setAmount(e.target.value)}
+          required
+        />
+        <button type="submit" className="button">Pay Now</button>
+      </form>
+
+      {/* Box payment section */}
+      <h2 className="title">Quick Payment Boxes</h2>
+      <div className="box-container">
+        {predefinedPrices.map((price) => (
+          <div key={price} className="price-box" onClick={() => handleBoxClick(price)}>
+            KES {price}
+          </div>
+        ))}
+      </div>
+
+      {/* Modal for box payment */}
+      {modalOpen && (
+        <div className="modal-backdrop">
+          <div className="modal">
+            <h3>Pay KES {selectedAmount}</h3>
+            <input
+              className="input"
+              placeholder="Enter phone number"
+              value={modalPhone}
+              onChange={(e) => setModalPhone(e.target.value)}
+              required
             />
-            Deploy now
-          </a>
-          <a
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-            className={styles.secondary}
-          >
-            Read our docs
-          </a>
+            <button
+              className="button"
+              onClick={(e) => handleSubmit(e, String(selectedAmount ?? ''), modalPhone, true)}
+            >
+              Pay Now
+            </button>
+            <button className="button cancel" onClick={() => setModalOpen(false)}>Cancel</button>
+          </div>
         </div>
-      </main>
-      <footer className={styles.footer}>
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
-    </div>
-  );
+      )}
+
+         <h1 className="title1">Dont Worry, your cash will be refunded to your account as this is a testing environment</h1>
+         <h1 className="title1">On the phone Number start with 254...e.g 254768131905</h1>
+    </main>
+  )
 }
