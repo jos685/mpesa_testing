@@ -4,7 +4,17 @@ import { FormEvent, useState } from 'react'
 import toast from 'react-hot-toast'
 import './styles/main.css'
 
-const predefinedPrices = [50, 60, 70, 80, 100, 200]
+const predefinedPrices = [500, 800, 100, 2000, 3000, 4000, 5000]
+
+// ✅ Phone normalizer function
+const normalizePhone = (input: string) => {
+  const cleaned = input.replace(/\s+/g, '').replace(/[^0-9+]/g, '')
+
+  if (cleaned.startsWith('+254')) return cleaned.slice(1)
+  if (cleaned.startsWith('07')) return '254' + cleaned.slice(1)
+  if (cleaned.startsWith('254')) return cleaned
+  return cleaned
+}
 
 export default function Home() {
   const [phone, setPhone] = useState('')
@@ -23,17 +33,27 @@ export default function Home() {
     e.preventDefault()
     const loading = toast.loading('Sending payment request...')
 
+    const normalizedPhone = normalizePhone(customPhone)
+
     try {
       const res = await fetch('/api/stk-push', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ phone: customPhone, amount: customAmount }),
+        body: JSON.stringify({ phone: normalizedPhone, amount: customAmount }),
       })
       const data = await res.json()
 
       if (res.ok) {
         toast.success('STK Push sent to phone!', { id: loading })
-        if (closeModal) setModalOpen(false)
+
+        if (closeModal) {
+          setModalOpen(false)
+          setModalPhone('')
+          setSelectedAmount(null)
+        } else {
+          setPhone('')
+          setAmount('')
+        }
       } else {
         toast.error(data.message || 'Error occurred', { id: loading })
       }
@@ -55,7 +75,7 @@ export default function Home() {
       <form onSubmit={handleSubmit} className="form">
         <input
           className="input"
-          placeholder="Phone (2547...)"
+          placeholder="Phone (07... or 2547...)"
           value={phone}
           onChange={(e) => setPhone(e.target.value)}
           required
@@ -94,7 +114,9 @@ export default function Home() {
             />
             <button
               className="button"
-              onClick={(e) => handleSubmit(e, String(selectedAmount ?? ''), modalPhone, true)}
+              onClick={(e) =>
+                handleSubmit(e, String(selectedAmount ?? ''), modalPhone, true)
+              }
             >
               Pay Now
             </button>
@@ -103,8 +125,9 @@ export default function Home() {
         </div>
       )}
 
-         <h1 className="title1">Dont Worry, your cash will be refunded to your account as this is a testing environment</h1>
-         <h1 className="title1">On the phone Number start with 254...e.g 254768131905</h1>
+      {/* Demo Notice */}
+      <h1 className="title1">Don't worry, your cash will be refunded — this is a testing environment</h1>
+      <h1 className="title1">Phone number must start with 07... or 254...</h1>
     </main>
   )
 }
