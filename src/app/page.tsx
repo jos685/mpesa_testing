@@ -125,8 +125,7 @@ export default function Home() {
         </div>
       )}
 
-      {/* Demo Notice */}
-      <h1 className="title1">Don't worry, your cash will be refunded — this is a testing environment</h1>
+      {/*  Notice */}
       <h1 className="title1">Phone number must start with 07... or 254...</h1>
     </main>
   )
