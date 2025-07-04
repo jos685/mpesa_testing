@@ -35,14 +35,14 @@ export async function POST(req: Request) {
       BusinessShortCode: shortcode,
       Password: password,
       Timestamp: timestamp,
-      TransactionType: 'CustomerPayBillOnline',
+      TransactionType: 'CustomerBuyGoodsOnline',
       Amount: amount,
       PartyA: phone,
       PartyB: shortcode,
       PhoneNumber: phone,
       CallBackURL: `${process.env.BASE_URL}/api/callback`,
       AccountReference: 'EPIC_SOFTWARES',
-      TransactionDesc: 'M-Pesa Demo Payment',
+      TransactionDesc: 'Epic Softwares Support',
     }),
   })
 
